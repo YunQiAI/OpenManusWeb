@@ -1,3 +1,5 @@
+import { t } from '/static/i18n.js';
+
 // connected_websocketManager.js - 处理WebSocket连接和消息
 
 export class WebSocketManager {
@@ -8,6 +10,15 @@ export class WebSocketManager {
         this.maxReconnectAttempts = 5;
         this.reconnectDelay = 1000; // 初始重连延迟1秒
         this.sessionId = null;
+    }
+
+    // Keep the status translation key available for language changes.
+    setStatus(key, params = {}) {
+        const status = document.getElementById('status-indicator');
+        status.dataset.statusKey = key;
+        status.dataset.reconnectAttempt = params.attempt ?? '';
+        status.dataset.reconnectMax = params.max ?? '';
+        status.textContent = t(key, params);
     }
 
     // 连接WebSocket
@@ -41,7 +52,7 @@ export class WebSocketManager {
     // 处理连接打开
     handleOpen(event) {
         console.log('WebSocket连接已建立');
-        document.getElementById('status-indicator').textContent = '已连接到服务器...';
+        this.setStatus('connected_to_server');
         // 重置重连尝试次数
         this.reconnectAttempts = 0;
     }
@@ -83,7 +94,7 @@ export class WebSocketManager {
 
         if (this.reconnectAttempts >= this.maxReconnectAttempts) {
             console.log('达到最大重连尝试次数，停止重连');
-            document.getElementById('status-indicator').textContent = '连接已断开，请刷新页面重试';
+            this.setStatus('websocket_disconnected');
             return;
         }
 
@@ -91,7 +102,7 @@ export class WebSocketManager {
         const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1); // 指数退避
 
         console.log(`尝试重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})，延迟 ${delay}ms`);
-        document.getElementById('status-indicator').textContent = `连接已断开，正在尝试重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`;
+        this.setStatus('websocket_reconnecting', { attempt: this.reconnectAttempts, max: this.maxReconnectAttempts });
 
         setTimeout(() => {
             if (this.sessionId) {
