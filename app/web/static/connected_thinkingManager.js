@@ -1,3 +1,5 @@
+import { t } from '/static/i18n.js';
+
 // connected_thinkingManager.js - 处理AI思考过程显示
 
 export class ThinkingManager {
@@ -96,7 +98,7 @@ export class ThinkingManager {
             if (step.details) {
                 detailsElement.textContent = step.details;
             } else {
-                detailsElement.textContent = '(无详细内容)';
+                detailsElement.textContent = t('no_details');
             }
 
             contentDiv.appendChild(headerDiv);
@@ -107,7 +109,7 @@ export class ThinkingManager {
             // 创建详情按钮
             const detailsButton = document.createElement('button');
             detailsButton.className = 'btn-details';
-            detailsButton.textContent = '显示详情 ▼';
+            detailsButton.textContent = t('show_details');
             contentDiv.appendChild(detailsButton);
 
             // 创建详情内容（初始隐藏）
@@ -121,10 +123,10 @@ export class ThinkingManager {
             detailsButton.addEventListener('click', () => {
                 if (detailsDiv.style.display === 'none') {
                     detailsDiv.style.display = 'block';
-                    detailsButton.textContent = '隐藏详情 ▲';
+                    detailsButton.textContent = t('hide_details');
                 } else {
                     detailsDiv.style.display = 'none';
-                    detailsButton.textContent = '显示详情 ▼';
+                    detailsButton.textContent = t('show_details');
                 }
             });
         }
@@ -149,34 +151,44 @@ export class ThinkingManager {
 
         switch (step.type) {
             case 'thinking':
-                return step.content || '思考过程';
+                return step.content || t('thinking_process');
             case 'tool':
-                return `使用工具: ${step.tool || ''}`;
+                return t('using_tool', { tool: step.tool || '' });
             case 'file':
-                return `在工作区 ${step.workspace || ''} 中生成了 ${step.files ? step.files.length : 0} 个文件:`;
+                return t('generated_files_in_workspace', { workspace: step.workspace || '', count: step.files ? step.files.length : 0 });
             case 'conclusion':
             case 'completed':
-                return `任务处理完成! 已在工作区 ${step.workspace || ''} 中生成结果。`;
+                return t('task_completed_workspace', { workspace: step.workspace || '' });
             case 'error':
-                return `发生错误: ${step.error || ''}`;
+                return t('error_prefix', { error: step.error || '' });
             case 'system':
-                return step.content || '系统消息';
+                return step.content || t('system_message');
             case 'system_log':
-                return step.message || '系统日志';
+                return step.message || t('system_log');
             case 'progress':
-                return `执行步骤 ${step.current}/${step.total}`;
+                return t('executing_step', { current: step.current, total: step.total });
             case 'communication':
-                return step.message || '通信';
+                return step.message || t('communication');
             default:
-                return step.content ? step.content.substring(0, 50) + (step.content.length > 50 ? '...' : '') : '思考步骤';
+                return step.content ? step.content.substring(0, 50) + (step.content.length > 50 ? '...' : '') : t('thinking_step');
         }
     }
 
     // 更新记录计数
     updateRecordCount() {
         if (this.recordCountElement) {
-            this.recordCountElement.textContent = `${this.thinkingSteps.length} 条记录`;
+            this.recordCountElement.textContent = t('records_count', { count: this.thinkingSteps.length });
         }
+    }
+
+    // Refresh previously rendered labels when the user changes language.
+    refreshLanguage() {
+        this.thinkingContainer.replaceChildren(...this.thinkingSteps.map(step => {
+            const element = this.createStepElement(step);
+            element.style.opacity = 1;
+            return element;
+        }));
+        this.updateRecordCount();
     }
 
     // 清除所有思考记录
