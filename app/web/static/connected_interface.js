@@ -77,29 +77,24 @@ class App {
         });
     }
 
-    // 更新动态生成的文本
+    // Localize existing dynamic labels when the user changes the language.
     updateDynamicTexts() {
-        // 更新状态指示器
         const statusIndicator = document.getElementById('status-indicator');
-        if (statusIndicator.textContent.includes('正在处理')) {
-            statusIndicator.textContent = t('processing_request');
-        } else if (statusIndicator.textContent.includes('处理已停止')) {
-            statusIndicator.textContent = t('processing_stopped');
+        const statusKey = statusIndicator.dataset.statusKey;
+        if (statusKey) {
+            const params = statusKey === 'websocket_reconnecting'
+                ? { attempt: statusIndicator.dataset.reconnectAttempt, max: statusIndicator.dataset.reconnectMax }
+                : {};
+            statusIndicator.textContent = t(statusKey, params);
         }
+        this.thinkingManager.refreshLanguage();
+        this.workspaceManager.refreshLanguage();
+    }
 
-        // 更新记录计数
-        const recordCount = document.getElementById('record-count');
-        const count = parseInt(recordCount.textContent);
-        if (!isNaN(count)) {
-            recordCount.textContent = t('records_count', { count });
-        }
-
-        // 更新刷新倒计时
-        const refreshCountdown = document.getElementById('refresh-countdown');
-        const seconds = refreshCountdown.textContent.match(/\d+/);
-        if (seconds) {
-            refreshCountdown.textContent = t('refresh_countdown', { seconds: seconds[0] });
-        }
+    setStatus(key) {
+        const status = document.getElementById('status-indicator');
+        status.dataset.statusKey = key;
+        status.textContent = key ? t(key) : '';
     }
 
     // 处理发送消息
@@ -112,7 +107,7 @@ class App {
         this.isProcessing = true;
         document.getElementById('send-btn').disabled = true;
         document.getElementById('stop-btn').disabled = false;
-        document.getElementById('status-indicator').textContent = t('processing_request');
+        this.setStatus('processing_request');
 
         try {
             // 发送API请求创建新会话
@@ -146,7 +141,7 @@ class App {
             this.isProcessing = false;
             document.getElementById('send-btn').disabled = false;
             document.getElementById('stop-btn').disabled = true;
-            document.getElementById('status-indicator').textContent = '';
+            this.setStatus('');
         }
     }
 
@@ -158,7 +153,7 @@ class App {
                 this.isProcessing = false;
                 document.getElementById('send-btn').disabled = false;
                 document.getElementById('stop-btn').disabled = true;
-                document.getElementById('status-indicator').textContent = '';
+                this.setStatus('');
 
                 // 如果有结果，显示结果
                 if (data.result) {
@@ -220,7 +215,7 @@ class App {
 
             console.log('处理已停止');
             this.chatManager.addSystemMessage(t('processing_stopped'));
-            document.getElementById('status-indicator').textContent = t('processing_stopped');
+            this.setStatus('processing_stopped');
             document.getElementById('send-btn').disabled = false;
             document.getElementById('stop-btn').disabled = true;
             this.isProcessing = false;

@@ -56,7 +56,27 @@ export const translations = {
         
         // 语言切换
         'language': '语言',
-        'switch_language': '切换语言'
+        'switch_language': '切换语言',
+
+        // Live status, timeline, and workspace labels
+        'no_details': '(无详细内容)',
+        'show_details': '显示详情 ▼',
+        'hide_details': '隐藏详情 ▲',
+        'thinking_process': '思考过程',
+        'using_tool': '使用工具: {tool}',
+        'generated_files_in_workspace': '在工作区 {workspace} 中生成了 {count} 个文件:',
+        'task_completed_workspace': '任务处理完成! 已在工作区 {workspace} 中生成结果。',
+        'error_prefix': '发生错误: {error}',
+        'system_message': '系统消息',
+        'system_log': '系统日志',
+        'executing_step': '执行步骤 {current}/{total}',
+        'communication': '通信',
+        'thinking_step': '思考步骤',
+        'no_workspace_files': '没有工作区文件',
+        'refreshing': '刷新中...',
+        'connected_to_server': '已连接到服务器...',
+        'websocket_disconnected': '连接已断开，请刷新页面重试',
+        'websocket_reconnecting': '连接已断开，正在尝试重连 ({attempt}/{max})...'
     },
     
     // 英文翻译
@@ -107,7 +127,27 @@ export const translations = {
         
         // 语言切换
         'language': 'Language',
-        'switch_language': 'Switch Language'
+        'switch_language': 'Switch Language',
+
+        // Live status, timeline, and workspace labels
+        'no_details': '(No details)',
+        'show_details': 'Show details ▼',
+        'hide_details': 'Hide details ▲',
+        'thinking_process': 'Thinking process',
+        'using_tool': 'Using tool: {tool}',
+        'generated_files_in_workspace': 'Generated {count} files in workspace {workspace}:',
+        'task_completed_workspace': 'Task completed! Results saved to workspace {workspace}.',
+        'error_prefix': 'Error: {error}',
+        'system_message': 'System message',
+        'system_log': 'System log',
+        'executing_step': 'Executing step {current}/{total}',
+        'communication': 'Communication',
+        'thinking_step': 'Thinking step',
+        'no_workspace_files': 'No workspace files',
+        'refreshing': 'Refreshing...',
+        'connected_to_server': 'Connected to server...',
+        'websocket_disconnected': 'Connection lost. Refresh the page to try again.',
+        'websocket_reconnecting': 'Connection lost. Reconnecting ({attempt}/{max})...'
     }
 };
 
